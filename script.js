@@ -13,10 +13,13 @@ function updateCountdown() {
   const targetTime = new Date(target).getTime();
   const currentTime = new Date().getTime();
   const remainingTime = targetTime - currentTime;
+  const mainEl = document.getElementById("countdown-main");
+  const msEl = document.getElementById("countdown-ms");
 
   // If the countdown is finished, display a message
   if (remainingTime <= 0) {
-    document.getElementById("countdown").innerHTML = "Countdown finished!";
+    mainEl.innerHTML = "Countdown Finished!";
+    msEl.innerHTML = ""; // Clear the milliseconds
     document.getElementById(
       "currentTime"
     ).innerHTML = `Current time: ${new Date().toLocaleString()}`;
@@ -26,19 +29,20 @@ function updateCountdown() {
     return;
   }
 
-  // Calculate days, hours, minutes, and seconds
+  // Calculate each unit of time
   const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
   const hours = Math.floor(
     (remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
   );
   const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-  // Calculate seconds as a floating-point number
-  const seconds = (remainingTime % (1000 * 60)) / 1000;
+  const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+  const milliseconds = remainingTime % 1000;
 
-  // Display the countdown with seconds formatted to 3 decimal places
-  document.getElementById(
-    "countdown"
-  ).innerHTML = `${days}d ${hours}h ${minutes}m ${seconds.toFixed(3)}s`;
+  // Update the main part of the countdown
+  mainEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}`;
+
+  // Update the milliseconds part, padding with leading zeros to keep it 3 digits long
+  msEl.innerHTML = `.${String(milliseconds).padStart(3, "0")}s`;
 
   // Display current and target times
   document.getElementById(

@@ -25,11 +25,13 @@
         <p>Target: <span id="targetTime">...</span></p>
       </div>
 
-      <h1
-        class="text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 leading-tight"
+      <div
+        class="flex items-baseline justify-center text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 leading-tight"
       >
-        <span id="countdown">Loading...</span>
-      </h1>
+        <!-- Main part of the countdown -->
+        <span id="countdown-main">Loading...</span>
+        <span id="countdown-ms" class="text-5xl md:text-6xl"></span>
+      </div>
       <p class="text-gray-500 text-2xl mt-2">is left</p>
     </div>
 
