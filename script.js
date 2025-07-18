@@ -50,4 +50,4 @@ function updateCountdown() {
 }
 
 // Update the countdown every 10 milliseconds for a smoother animation
-setInterval(updateCountdown, 10);
+setInterval(updateCountdown, 2);
