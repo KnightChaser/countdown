@@ -16,6 +16,37 @@
       body {
         font-family: "Intel One Mono", sans-serif;
       }
+
+      /* ODOMETER STYLES */
+      .digit-container {
+        /* This is the "window" for a single digit */
+        display: inline-block;
+        height: 1em; /* Set height based on font size */
+        line-height: 1em;
+        overflow: hidden; /* This is the magic! Hides the other numbers */
+        vertical-align: baseline;
+      }
+
+      .digit-reel {
+        /* This is the vertical strip of numbers */
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.4s ease-in-out; /* The animation! */
+      }
+
+      .digit-reel > span {
+        height: 1em; /* Each number has the same height as the window */
+      }
+
+      .unit-container {
+        /* For the 'd', 'h', 'm', 's' characters that don't scroll */
+        display: inline-block;
+      }
+
+      .no-transition {
+        /* This class can be added to prevent transitions when updating */
+        transition: none !important;
+      }
     </style>
   </head>
   <body class="bg-gray-900 text-white">
@@ -25,12 +56,12 @@
         <p>Target: <span id="targetTime">...</span></p>
       </div>
 
+      <!-- Countdown Container -->
       <div
-        class="flex items-baseline justify-center text-8xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 leading-tight"
+        id="odometer"
+        class="flex items-baseline justify-center font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
       >
-        <!-- Main part of the countdown -->
-        <span id="countdown-main">Loading...</span>
-        <span id="countdown-ms" class="text-5xl md:text-6xl"></span>
+        <!-- Javascript will build the odometer-style countdown here -->
       </div>
       <p class="text-gray-500 text-2xl mt-2">is left</p>
     </div>

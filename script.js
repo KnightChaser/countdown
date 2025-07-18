@@ -1,57 +1,89 @@
-function updateCountdown() {
-  // Get the target time from the URL
+// script.js
+const odometerContainer = document.getElementById("odometer");
+let previousTime = "";
+
+/**
+ * Build d/h/m/s reels only
+ */
+function setupOdometer() {
+  const layout = "000d 00h 00m 00s";
+
+  for (const char of layout) {
+    if (/\d/.test(char)) {
+      // digit reel
+      const digitContainer = document.createElement("div");
+      digitContainer.className = "digit-container text-8xl md:text-9xl";
+      const reel = document.createElement("div");
+      reel.className = "digit-reel";
+      for (let i = 0; i <= 9; i++) {
+        const span = document.createElement("span");
+        span.textContent = i;
+        reel.appendChild(span);
+      }
+      digitContainer.appendChild(reel);
+      odometerContainer.appendChild(digitContainer);
+    } else if (char === " ") {
+      // spacer
+      const space = document.createElement("div");
+      space.className = "unit-container";
+      space.innerHTML = "&nbsp;";
+      odometerContainer.appendChild(space);
+    } else {
+      // unit (d, h, m, s)
+      const unit = document.createElement("div");
+      unit.className = "unit-container text-8xl md:text-9xl";
+      unit.textContent = char;
+      odometerContainer.appendChild(unit);
+    }
+  }
+}
+
+/**
+ * Update only every second, drop ms
+ */
+function updateOdometer() {
   const urlParams = new URLSearchParams(window.location.search);
-  const target = urlParams.get("target");
-
-  // If no target is provided, display an error
+  const target = urlParams.get("target"); // e.g. "2025-12-23T24:00:00"
   if (!target) {
-    document.getElementById("countdown").innerHTML =
-      "Target time not provided!";
+    odometerContainer.innerHTML =
+      '<span class="text-4xl">Target not provided!</span>';
     return;
   }
 
-  const targetTime = new Date(target).getTime();
-  const currentTime = new Date().getTime();
-  const remainingTime = targetTime - currentTime;
-  const mainEl = document.getElementById("countdown-main");
-  const msEl = document.getElementById("countdown-ms");
+  const now = Date.now();
+  const diff = Math.max(0, new Date(target).getTime() - now);
 
-  // If the countdown is finished, display a message
-  if (remainingTime <= 0) {
-    mainEl.innerHTML = "Countdown Finished!";
-    msEl.innerHTML = ""; // Clear the milliseconds
-    document.getElementById(
-      "currentTime"
-    ).innerHTML = `Current time: ${new Date().toLocaleString()}`;
-    document.getElementById("targetTime").innerHTML = new Date(
-      target
-    ).toLocaleString();
-    return;
+  const days = Math.floor(diff / 86_400_000);
+  const hours = Math.floor((diff % 86_400_000) / 3_600_000);
+  const minutes = Math.floor((diff % 3_600_000) / 60_000);
+  const seconds = Math.floor((diff % 60_000) / 1000);
+
+  const formatted =
+    `${String(days).padStart(3, "0")}d ` +
+    `${String(hours).padStart(2, "0")}h ` +
+    `${String(minutes).padStart(2, "0")}m ` +
+    `${String(seconds).padStart(2, "0")}s`;
+
+  if (formatted === previousTime) return;
+  previousTime = formatted;
+
+  const reels = document.querySelectorAll(".digit-reel");
+  let idx = 0;
+  for (const c of formatted) {
+    if (/\d/.test(c)) {
+      const val = +c;
+      reels[idx].style.transform = `translateY(-${val}em)`;
+      idx++;
+    }
   }
 
-  // Calculate each unit of time
-  const days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(
-    (remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  );
-  const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-  const milliseconds = remainingTime % 1000;
-
-  // Update the main part of the countdown
-  mainEl.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}`;
-
-  // Update the milliseconds part, padding with leading zeros to keep it 3 digits long
-  msEl.innerHTML = `.${String(milliseconds).padStart(3, "0")}s`;
-
-  // Display current and target times
   document.getElementById(
     "currentTime"
-  ).innerHTML = `Current time: ${new Date().toLocaleString()}`;
-  document.getElementById("targetTime").innerHTML = new Date(
+  ).textContent = `Current time: ${new Date().toLocaleString()}`;
+  document.getElementById("targetTime").textContent = new Date(
     target
   ).toLocaleString();
 }
 
-// Update the countdown every 10 milliseconds for a smoother animation
-setInterval(updateCountdown, 2);
+setupOdometer();
+setInterval(updateOdometer, 100);
