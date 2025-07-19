@@ -57,12 +57,12 @@ function setupOdometer() {
       // spacer
       const space = document.createElement("div");
       space.className = "unit-container";
-      space.innerHTML = "&nbsp;";
+      space.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;"; // Non-breaking space
       odometerContainer.appendChild(space);
     } else {
       // unit (d, h, m, s)
       const unit = document.createElement("div");
-      unit.className = "unit-container text-8xl md:text-9xl";
+      unit.className = "unit-container text-3xl md:text-4xl ml-2";
       unit.textContent = char;
       odometerContainer.appendChild(unit);
     }
