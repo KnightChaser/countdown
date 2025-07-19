@@ -3,6 +3,37 @@ const odometerContainer = document.getElementById("odometer");
 let previousTime = "";
 
 /**
+ * Set up the event listener for the "Set Target Time" button
+ * This will prompt the user to enter a target date/time in ISO 8601 format.
+ * If valid, it updates the URL with the new target and reloads the page.
+ * If invalid, it shows an error message.
+ */
+document.getElementById("setDateBtn").addEventListener("click", () => {
+  Swal.fire({
+    title: "Set Target Time",
+    input: "text",
+    inputLabel: "Enter date/time (ISO 8601)",
+    inputPlaceholder: "e.g. 2025-12-23T24:00:00",
+    inputValue: new URLSearchParams(window.location.search).get("target") || "",
+    showCancelButton: true,
+    confirmButtonText: "Set",
+    preConfirm: (value) => {
+      if (!value || isNaN(Date.parse(value))) {
+        Swal.showValidationMessage("Invalid ISO 8601 format.");
+        return false;
+      }
+      return value;
+    },
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set("target", result.value);
+      window.location.href = newUrl.toString(); // Reload with updated target
+    }
+  });
+});
+
+/**
  * Build d/h/m/s reels only
  */
 function setupOdometer() {

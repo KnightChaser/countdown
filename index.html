@@ -6,6 +6,7 @@
     <title>Countdown</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -54,6 +55,12 @@
       <div class="text-gray-400 text-lg mb-4">
         <p id="currentTime">Current time: ...</p>
         <p>Target: <span id="targetTime">...</span></p>
+        <button
+          id="setDateBtn"
+          class="mt-2 px-4 py-2 bg-pink-600 text-white font-bold rounded hover:bg-pink-700 transition"
+        >
+          Set date & time
+        </button>
       </div>
 
       <!-- Countdown Container -->
