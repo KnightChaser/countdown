@@ -2,6 +2,68 @@
 const odometerContainer = document.getElementById("odometer");
 let previousTime = "";
 
+// Gradient colors from Tailwind's purple-400 to pink-600
+const GRADIENT_START = { r: 167, g: 139, b: 250 };
+const GRADIENT_END = { r: 219, g: 39, b: 119 };
+
+/**
+ * Interpolates between two colors.
+ * Factor is between 0 and 1.
+ */
+function interpolateColor(color1, color2, factor) {
+  let result = { ...color1 };
+  for (const key in result) {
+    result[key] = Math.round(
+      color1[key] + factor * (color2[key] - color1[key])
+    );
+  }
+  return `rgb(${result.r}, ${result.g}, ${result.b})`;
+}
+
+/**
+ * Applies a global gradient to all visible characters in the odometer
+ * by calculating the color for each one based on its position.
+ */
+function applyGlobalGradient() {
+  const chars = odometerContainer.querySelectorAll(
+    ".digit-reel > span, .unit-container small"
+  );
+  if (chars.length === 0) return;
+
+  // Find the horizontal bounds of the entire odometer string
+  const firstChar = chars[0];
+  const lastChar = chars[chars.length - 1];
+  const startX = firstChar.getBoundingClientRect().left;
+  const endX = lastChar.getBoundingClientRect().right;
+  const totalWidth = endX - startX;
+
+  // Apply interpolated color to each character
+  odometerContainer
+    .querySelectorAll(".digit-container")
+    .forEach((digitContainer) => {
+      const reel = digitContainer.querySelector(".digit-reel");
+      const position =
+        digitContainer.getBoundingClientRect().left +
+        digitContainer.offsetWidth / 2;
+      const factor = (position - startX) / totalWidth;
+      const color = interpolateColor(GRADIENT_START, GRADIENT_END, factor);
+
+      // Apply the same calculated color to all 10 numbers in the reel
+      reel.querySelectorAll("span").forEach((span) => {
+        span.style.color = color;
+      });
+    });
+
+  odometerContainer
+    .querySelectorAll(".unit-container small")
+    .forEach((unit) => {
+      if (!unit.textContent.trim()) return; // Skip spacers
+      const position = unit.getBoundingClientRect().left + unit.offsetWidth / 2;
+      const factor = (position - startX) / totalWidth;
+      unit.style.color = interpolateColor(GRADIENT_START, GRADIENT_END, factor);
+    });
+}
+
 /**
  * Set up the event listener for the "Set Target Time" button
  * This will prompt the user to enter a target date/time in ISO 8601 format.
@@ -145,13 +207,15 @@ function updateOdometer() {
   previousTime = formatted;
 
   // Rebuild odometer layout if changed
-  const currentDigits = document.querySelectorAll(".digit-reel").length;
+  const currentDigits =
+    odometerContainer.querySelectorAll(".digit-reel").length;
   const expectedDigits = (formatted.match(/\d/g) || []).length;
   if (currentDigits !== expectedDigits) {
     setupOdometer(diff); // layout might have changed
+    applyGlobalGradient(); // Re-apply gradient when layout changes
   }
 
-  const reels = document.querySelectorAll(".digit-reel");
+  const reels = odometerContainer.querySelectorAll(".digit-reel");
   let idx = 0;
   for (const c of formatted) {
     if (/\d/.test(c)) {
@@ -169,5 +233,9 @@ function updateOdometer() {
   ).toLocaleString();
 }
 
+// Initial Kick-off
 setInterval(updateOdometer, 100);
 updateOdometer();
+
+// Re-apply gradient on window resize to ensure it's always accurate
+window.addEventListener("resize", applyGlobalGradient);
