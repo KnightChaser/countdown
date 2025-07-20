@@ -13,44 +13,7 @@
       href="https://fonts.googleapis.com/css2?family=Intel+One+Mono:ital,wght@0,300..700;1,300..700&display=swap"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: "Intel One Mono", sans-serif;
-        background-color: #111827; /* Tailwind's bg-gray-900 for consistency */
-        color: #fff; /* Default text color */
-      }
-
-      /* ODOMETER STYLES */
-      .digit-container {
-        /* This is the "window" for a single digit */
-        display: inline-block;
-        height: 1em; /* Set height based on font size */
-        line-height: 1em;
-        overflow: hidden; /* This is the magic! Hides the other numbers */
-        vertical-align: baseline;
-      }
-
-      .digit-reel {
-        /* This is the vertical strip of numbers */
-        display: flex;
-        flex-direction: column;
-        transition: transform 0.4s ease-in-out; /* The animation! */
-      }
-
-      .digit-reel > span {
-        height: 1em; /* Each number has the same height as the window */
-      }
-
-      .unit-container {
-        /* For the 'd', 'h', 'm', 's' characters that don't scroll */
-        display: inline-block;
-      }
-
-      .no-transition {
-        /* This class can be added to prevent transitions when updating */
-        transition: none !important;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="bg-gray-900 text-white">
     <div class="h-screen flex items-center justify-center flex-col text-center">
