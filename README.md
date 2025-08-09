@@ -1,11 +1,11 @@
 # `countdown` ⏲️
 > A lightweight and shareable countdown page, hosted by GitHub Pages.
 
+[![pages-build-deployment](https://github.com/KnightChaser/countdown/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/KnightChaser/countdown/actions/workflows/pages/pages-build-deployment)
+
 ### Preview
 <img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/f31a8fc3-ce54-43ef-95f3-a0059c08a871" />
 <img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/af8459a1-e45c-450e-b7ec-191ba26f7b2a" />
-
-
 
 
 ### Usage
