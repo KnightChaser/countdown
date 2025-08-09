@@ -1,38 +1,266 @@
-/* styles.css */
+/* Base */
+:root {
+  --bg: #0b1220;
+  --fg: #eaf2ff;
+  --muted: #9aa6c0;
 
+  /* Neon palette (blue/green) */
+  --neon-a: #00e5ff; /* aqua */
+  --neon-b: #37ff7f; /* neon green */
+
+  /* Accent helpers */
+  --pink: #ec4899;
+  --violet: #8b5cf6;
+
+  /* Motion control */
+  --glow-amt: 0.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --glow-amt: 0;
+  }
+  .neon-bg,
+  .aura,
+  .scanlines {
+    animation: none !important;
+  }
+}
+
+html,
 body {
-  font-family: "Intel One Mono", sans-serif;
-  background-color: #111827; /* Tailwind's bg-gray-900 for consistency */
-  color: #fff; /* Default text color */
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "Intel One Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-/* ODOMETER STYLES */
-.digit-container {
-  /* This is the "window" for a single digit */
-  display: inline-block;
-  height: 1em; /* Set height based on font size */
-  line-height: 1em;
-  overflow: hidden; /* This is the magic! Hides the other numbers */
-  vertical-align: baseline;
+/* Neon animated background (layered radial blobs + subtle drift) */
+.neon-bg {
+  animation: none; /* kill drift */
+  background: radial-gradient(
+      40% 40% at 18% 32%,
+      color-mix(in oklab, var(--neon-a) 60%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      46% 46% at 83% 22%,
+      color-mix(in oklab, var(--neon-b) 60%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      60% 55% at 70% 78%,
+      color-mix(in oklab, var(--violet) 45%, transparent) 0%,
+      transparent 65%
+    ),
+    linear-gradient(120deg, #07111e 0%, #0d1828 100%);
+  filter: saturate(1.1);
+}
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: saturate(1.2) blur(0px);
+  }
+  100% {
+    transform: translate3d(0, -2%, 0) scale(1.03);
+    filter: saturate(1.25) blur(1px);
+  }
 }
 
-.digit-reel {
-  /* This is the vertical strip of numbers */
+/* CRT-ish scanlines (very subtle) */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 2px,
+    transparent 3px
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0.12;
+  z-index: -1;
+}
+
+/* Glass card */
+.glass.card {
+  position: relative;
+  border-radius: 24px;
+  padding: clamp(18px, 3vw, 28px);
+  width: 100%;
+  background: color-mix(in oklab, rgba(8, 13, 26, 0.65) 92%, transparent);
+  backdrop-filter: blur(18px) saturate(1.05);
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--neon-a) 20%, transparent),
+    0 20px 60px rgba(0, 0, 0, 0.45);
+  outline: 1px solid color-mix(in oklab, var(--neon-b) 10%, transparent);
+}
+
+/* Neon border glow (animated gradient border) */
+.glass.card::before {
+  animation: none;
+  opacity: 0.14;
+  filter: blur(12px);
+}
+
+/* Ambient aura ring behind digits */
+.aura {
+  position: absolute;
+  inset: auto 0 -80px 0;
+  margin: auto;
+  width: min(700px, 90%);
+  height: 220px;
+  border-radius: 999px;
+  background: radial-gradient(
+    60% 80% at 50% 50%,
+    color-mix(in oklab, var(--neon-a) 35%, transparent) 0%,
+    transparent 70%
+  );
+  filter: blur(35px) saturate(1.4);
+  opacity: 0.55;
+  animation: auraPulse 4s ease-in-out infinite;
+}
+@keyframes auraPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.7;
+  }
+}
+
+/* Header text */
+.muted {
+  color: var(--muted);
+}
+
+/* Buttons */
+.btn-neon {
+  --ring: color-mix(in oklab, var(--neon-a) 60%, var(--neon-b) 40%);
+  padding: 0.55rem 0.9rem;
+  border-radius: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  background: radial-gradient(
+      120% 180% at 20% 0%,
+      color-mix(in oklab, var(--neon-a) 30%, transparent),
+      transparent 50%
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--neon-a) 25%, transparent),
+      color-mix(in oklab, var(--neon-b) 25%, transparent)
+    );
+  color: white;
+  box-shadow: 0 0 0 1px color-mix(in oklab, var(--ring) 35%, transparent),
+    0 6px 22px color-mix(in oklab, var(--ring) 22%, transparent);
+  transition: transform 0.08s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+.btn-neon:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px var(--ring),
+    0 10px 32px color-mix(in oklab, var(--ring) 35%, transparent);
+}
+
+.btn-outline {
+  padding: 0.55rem 0.9rem;
+  border-radius: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid color-mix(in oklab, var(--fg) 18%, transparent);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: color-mix(in oklab, var(--neon-a) 30%, var(--fg) 15%);
+}
+
+/* Countdown wrapper */
+.od-wrap {
+  padding-inline: clamp(12px, 2vw, 24px);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.4s ease-in-out; /* The animation! */
+  align-items: center;
+  padding-inline: clamp(12px, 2vw, 24px);
+  overflow: hidden;
+}
+
+/* ODOMETER — typography & glow */
+#odometer {
+  /* fluid size with safe bounds */
+  display: inline-block;
+  transform-origin: center top;
+  font-size: clamp(42px, 8vw, 120px);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  text-rendering: geometricPrecision;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.55));
+  white-space: nowrap;
+  text-align: center;
+}
+
+.gap-spacer {
+  display: inline-block;
+  width: clamp(12px, 2.2vw, 26px);
+}
+
+/* Neon text glow that stays sharp */
+#odometer,
+#odometer .digit-reel > span,
+#odometer .unit-container small {
+  /* layered glow */
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.15);
+}
+
+/* Digit window */
+.digit-container {
+  position: relative;
+  display: inline-block;
+  height: 1em;
+  line-height: 1em;
+  overflow: hidden;
+  vertical-align: baseline;
+  margin-inline: 0.04em /* slight spacing between digits */;
+}
+
+.digit-container::before {
+  content: none;
+}
+
+/* Reel */
+.digit-reel {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); /* slightly snappier */
+  will-change: transform;
 }
 
 .digit-reel > span {
-  height: 1em; /* Each number has the same height as the window */
+  height: 1em;
 }
 
+/* Units (d/h/m/s) */
 .unit-container {
-  /* For the 'd', 'h', 'm', 's' characters that don't scroll */
   display: inline-block;
+  vertical-align: baseline;
+  margin-left: 0.12em;
+}
+.unit-container small {
+  font-size: clamp(16px, 2vw, 28px);
+  position: relative;
+  line-height: 1;
+  transform: translateY(-0.06em);
+  opacity: 0.95;
 }
 
+/* Utility */
 .no-transition {
-  /* This class can be added to prevent transitions when updating */
   transition: none !important;
 }

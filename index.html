@@ -15,27 +15,61 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="bg-gray-900 text-white">
-    <div class="h-screen flex items-center justify-center flex-col text-center">
-      <div class="text-gray-400 text-lg mb-4">
-        <p id="currentTime">Current time: ...</p>
-        <p>Target: <span id="targetTime">...</span></p>
-        <button
-          id="setDateBtn"
-          class="mt-2 px-4 py-2 bg-pink-600 text-white font-bold rounded hover:bg-pink-700 transition"
-        >
-          Set date & time
-        </button>
-      </div>
 
-      <!-- Countdown Container - now much simpler -->
-      <div id="odometer" class="flex items-baseline justify-center font-black">
-        <!-- Javascript will build the odometer-style countdown here -->
-      </div>
-      <p class="text-gray-500 text-2xl mt-2">is left</p>
-    </div>
+  <body class="bg-gray-900 text-white">
+    <!-- Neon background & scanlines -->
+    <div class="neon-bg" aria-hidden="true"></div>
+    <div class="scanlines pointer-events-none" aria-hidden="true"></div>
+
+    <main class="min-h-screen flex items-center justify-center p-6">
+      <section class="glass card w-full max-w-5xl">
+        <header class="flex flex-col items-center gap-2 text-center">
+          <p id="currentTime" class="muted text-sm md:text-base">Current time: ...</p>
+          <p class="muted text-sm md:text-base">
+            Target: <span id="targetTime">...</span>
+          </p>
+
+          <div class="flex gap-2 mt-2">
+            <button
+              id="setDateBtn"
+              class="btn-neon"
+              title="Set target date & time"
+            >
+              Set date & time
+            </button>
+
+            <button
+              id="copyLinkBtn"
+              class="btn-outline"
+              title="Copy shareable URL"
+            >
+              Copy share link
+            </button>
+          </div>
+        </header>
+
+        <!-- Countdown -->
+        <div class="od-wrap">
+          <div id="odometer" class="flex items-baseline justify-center font-black"></div>
+          <p class="muted text-xl md:text-2xl mt-3">is left</p>
+        </div>
+
+        <!-- Ambient glow ring -->
+        <div class="aura" aria-hidden="true"></div>
+      </section>
+    </main>
 
     <script src="script.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+    <script>
+      // copy share link
+      document.getElementById('copyLinkBtn')?.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          Swal.fire({icon: 'success', title: 'Link copied', timer: 1200, showConfirmButton: false});
+        } catch (_) {
+          Swal.fire({icon: 'error', title: 'Copy failed'});
+        }
+        });
+    script>
   </body>
 </html>
